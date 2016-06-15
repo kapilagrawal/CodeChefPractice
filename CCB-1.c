@@ -1,5 +1,5 @@
 #include<stdio.h>
-//Updated the description
+/*Updated the description*/
 int main()
 {
 	int t;
