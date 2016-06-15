@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+//Updated the description
 int main(void) 
 {
 	int i, n, k, x;
