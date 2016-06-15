@@ -1,5 +1,5 @@
 #include <stdio.h>
-
+//Updated the description
 int power(int x, int y)
 {
     int i, r = 1;
