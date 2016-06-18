@@ -1,0 +1,209 @@
+******************************
+PROBLEM STATEMENT
+**********************************
+
+Let's consider a triangle of numbers in which a number appears in the first line, two numbers appear in the second line, three in the third line, etc. Develop a program which will compute the largest of the sums of numbers that appear on the paths starting from the top towards the base, so that:
+
+on each path the next number is located on the row below, more precisely either directly below or below and one place to the right;
+the number of rows is strictly positive, but less than 100
+all numbers are positive integers between O and 99.
+Input
+
+In the first line integer n - the number of test cases (equal to about 1000). Then n test cases follow. Each test case starts with the number of lines which is followed by their content.
+
+Output
+
+For each test case write the determined value in a separate line.
+
+Example
+
+Input:
+2
+3
+1
+2 1
+1 2 3
+4 
+1 
+1 2 
+4 1 2
+2 3 1 1 
+
+Output:
+5
+9
+
+Warning: large Input/Output data, be careful with certain languages
+
+
+########################################################################################################
+
+USING RECURSION
+
+Problem Tutorial - Sums in a Triangle
+Sums in a Triangle http://www.codechef.com/problems/SUMTRIAN represents a broad range of problems that can be solved by using a recursive approach. As such, we will see one of the methods to solve it.
+
+The problem asks one to take as input the number of test cases as the first input. Each test case consists of the number of rows 'n' and then 'n' lines follow containing each row.
+
+The first row has 1 number, the second has 2 numbers, the 3rd has 3 numbers and so on. Now, We have to find a path from row 1 to row 'n' such that the cost of the path is maximized.
+
+The cost of a path is the sum of all the numbers that make up the path. The additional constraint is that from a particular cell, we can only go to a cell in the next row directly beneath the cell or to the one situated to the right of the one beneath it. We start off in the topmost row and in its left most cell.
+
+A very naive way to do this is to generate all paths, find the cost of the paths and choose the best one. Such an approach would time out because we can have a max of 100 rows.
+
+Now, to model a problem in a recursive manner, we need subproblems which are similar to the problem to be solved. The prerequisites to modelling a recursive solution are
+
+1. There should be subproblems
+
+2. There should be terminating conditions called base conditions.
+
+3. The sub-problem to be solved must be the same as the parent problem, but of a smaller magnitude or size.
+
+4. There should be no cycles. One should not be able to reach a state, by starting off from it.
+
+To solve this problem, we will try to see if it satisfies the prerequisites for a recursive problem.
+
+1. First of all, we need to find subproblems. Consider a particular cell (i, j). From this cell, we can go either to cell (i + 1, j) or (i + 1, j + 1), where the first index represents the row and the second one represents the columns. Now, we need to maximize the sum for paths from cell (0, 0). Now, the maximum path value for cell (0, 0) will equal the value at cell(0, 0) + max(value of max path from cell(0, 1), value of max path from cell(1, 1)) Thus, we get the subproblems that we were looking for. The max path value at a particular cell equals the value at that cell + the max path values of cells reachable from it.
+
+2. We can fix the terminating conditions as follows. The value of the max path if we reach a row beyond the 'n' rows specified is 0. This becomes our stopping condition for each path.
+
+3. The subproblem to be solved is the same as the original problem. At each step we are making the size of the rows to be checked lesser and lesser and moving towards our base condition.
+
+4. There are no cycles. There won't be a path such that we start from cell (i, j) and move on to some cells and reach cell(i, j) again. This can be seen by the fact that at each step, the row number keeps on increasing. It never decreases also, it never remains the same.
+
+Thus, having modelled it as a recursive solution, we can create a recursive solution to the problem as follows.
+
+Function solve(i, j)
+
+if i is greater than 'n'
+
+return 0
+
+t1 equals solve(i + 1, j)
+
+t2 equals solve(i + 1, j + 1)
+
+t equals max(t1, t2) + value at cell(i, j)
+
+return t
+
+********************
+ONE MORE WAY
+*******************
+5
+1 7
+6 3 4
+One of the methods is the following. Start from the top.. (also known as the top-down approach). The longest path from 5 can be given as…
+path(5) = 5+(max(path(1)+path(7))).
+This means that if we solve the problem in row 2 i.e elements 1 and 7, we can automatically have the solution for row 1. Now each row, depends on the ones below it. Continuing this till we reach the last row, we solve the problem. In the last row, we just have individual elements and not paths. No need to specify a path for the row after the last one. The code snippet is shown below
+
+int computedp(int a[105][105],int n,int row,int col)
+{
+if(row==n) return a[row][col];
+return max(a[row][col]+computedp(a,n,row+1,col),a[row][col]+computedp(a,n,row+1,col+1));
+}
+*********************
+#######################################################################################################
+
+RECURSION + MEMOIZATION (TOP DOWN APPROACH)
+
+This simple recursive function will get us the answer for the path with the maximum cost. This will work for small values of 'n'. One thing that we notice is that in the given situation, we might end up calculating the value of the max path from a particular cell more than once. We can reach (3,2) in two ways. (1,1)>(2,1)>(3,2) and (1,1)>(2,2)>(3,2). The max value path from (3,2) will be calculated more than once even though we get the answer for it, the first time. A simple way to overcome this is to cache the value for the path from (3,2) the very first time we calculate it. A simple change to the function will give us the required effect.
+
+Function solve(i, j)
+
+if i is greater than 'n'
+
+return 0
+
+if i, j has been visited before
+
+return cache(i, j)
+
+t1 equals solve(i + 1, j)
+
+t2 equals solve(i + 1, j + 1)
+
+t equals max(t1, t2) + value at cell(i, j)
+
+cache(i, j) equals t
+
+return t
+
+This technique is called recursion along with memoization. An analogous technique is Dynamic Programming which involves building the answer by using a bottom-up approach instead of the top-down approach used in the current method. A lot of problems which involve maximizing or minimizing values or which involve counting the number of patterns etc can be calculated using this technique.
+
+***************
+ONE MORE WAY
+**************
+
+5
+1 7
+6 3 4
+Here while finding out path(1) and path(7), we have
+path(1)=1+max(path(6)+path(3))
+path(7)=7+max(path(3)+path(4))
+
+Here we are finding path(3) twice, which really is not necessary as we can already use the result we found in the first computation in the second computation. So if we can somehow store this result somewhere and access this as and when it is required, then the problem can be more efficiently solved. This technique is what makes dynamic programming so effective in solving problems that could have never ever been imagined being solved. This technique is called “memoization” or memorization. “memoization” literally means memorization, but I have no idea why the creators of the word removed the “r” to make it complex..??. Try solving the triangle problem now and see if the solution gets accepted… The following is the code snippet(and PS:- It is correct this time.. :P)
+
+int memo[105][105];
+int computedp(int a[105][105],int n,int row,int col)
+{
+if(row==n) return a[row][col];
+
+//SET ALL ELEMENTS OF MEMO TO -1 INITIALLY TO CHECK IF VISITED OR NOT
+if(memo[row][col]!=-1) return memo[row][col];
+
+memo[row][col]=max(a[row][col]+computedp(a,n,row+1,col),a[row][col]+ computedp(a,n,row+1,col+1));
+
+return memo[row][col];
+}
+
+Always look for a possibility of having overlapping sub-problems. If this happens, yeah you got it…. Use MEMOIZATION.
+
+########################################################################################################
+
+BOTTOM UP APPROACH -- DP APPROACH
+
+It is said you need to start at the top of the triangle (where there is only one number) and keep moving to the number directly below or to the right until you reach the last row...
+
+Take as an example the triangle:
+
+1
+1 2
+9 2 3
+If you want to maximize the sum by only moving right or down, is it clear to you that you should follow the path 1 -> 1 -> 9?
+
+Note that 1 is not the maximum number you can choose on the 2nd row, but, it is the number that will "give you acess" to the number 9 on the third row, number which you will need to use if you want to reach the maximum sum...
+
+This idea probably could lead us to use some sort of depth-first search and/or recursion... It turns out that for a triangle with as many rows as 100, there are 2^99 routes altogether... That would take you some billion years to check all of them if you could check one trillion of routes per second!!
+
+So, we already know it would be good if we somehow knew in advance that we need to use number 9 on our solution without checking all possible routes... That can be done by using a bottom up approach instead of a top down one...
+
+Let's list all the possible sums we can make with the last 2 rows (I am starting from right to left here):
+
+using the 3 and 2 on last row we can have:
+
+3+2 or 2+2 (summing them with the 2 on 2nd row, as it directly above or one place to the right);
+
+Using the 9 and the 2 we get:
+
+2+1 or 9+1
+
+So, as you see two interesting things happened:
+
+We used the same number (2) twice (one time for each of the 2 neighbouring numbers on the same row) and we also managed to obtain all 4 results:
+
+5 or 4 for the 1st pair 3 or 10 for the 2nd pair
+
+This suggests that as we are using some values to repeat calculations, we can use recursion with memoization to solve the problem fast, and that's what we will do up to a point, let's see:
+
+We now know that the 2 maximum values we can obtain from the last rows are 5 and 10, so we replace these values on second row, and eliminate the third one completely, to get the new triangle:
+
+1
+10 5
+From here, it's easy to see that the maximum sum is 11.
+
+This approach works because we actually follow a down or to the right approach as required... Instead of starting at the top and waste all the time computing useless sums, by starting at the bottom and storing the maximum values we are "implicitly" removing lots of unnecessary values...
+
+Hope I could help,
+
+Bruno
