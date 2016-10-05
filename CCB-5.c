@@ -1,3 +1,5 @@
+https://blog.codechef.com/2009/07/02/tutorial-for-small-factorials/ 
+
 #include<stdio.h>
 //Updated the description
 int main()
